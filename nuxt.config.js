@@ -1,4 +1,14 @@
 import colors from 'vuetify/es5/util/colors'
+require('dotenv').config()
+const {
+  API_KEY,
+  AUTH_DOMAIN,
+  DATABASE_URL,
+  PROJECT_ID,
+  STORAGE_BUCKET,
+  MESSAGING_SENDER_ID,
+  APP_ID
+} = process.env
 
 export default {
   /*
@@ -56,7 +66,8 @@ export default {
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/dotenv'
   ],
   /*
   ** Axios module configuration
@@ -89,5 +100,14 @@ export default {
   ** See https://nuxtjs.org/api/configuration-build/
   */
   build: {
+  },
+  env: {
+    API_KEY,
+    AUTH_DOMAIN,
+    DATABASE_URL,
+    PROJECT_ID,
+    STORAGE_BUCKET,
+    MESSAGING_SENDER_ID,
+    APP_ID
   }
 }
