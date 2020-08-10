@@ -1,4 +1,6 @@
 import colors from 'vuetify/es5/util/colors'
+import ja from 'vuetify/es5/locale/ja'
+
 require('dotenv').config()
 const {
   API_KEY,
@@ -79,9 +81,13 @@ export default {
   ** https://github.com/nuxt-community/vuetify-module
   */
   vuetify: {
+    lang: {
+      locales: { ja },
+      current: 'ja'
+    },
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      dark: true,
+      // dark: true,
       themes: {
         dark: {
           primary: colors.blue.darken2,
