@@ -216,6 +216,7 @@ export default {
             // this.$refs.form.reset() // 中身がundefinedになってしまう
             this.clearFields()
           }
+          this.$emit('updated-salon')
           this.dialog = false
         })
         .catch((error) => {

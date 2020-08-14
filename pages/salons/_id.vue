@@ -23,6 +23,30 @@
         </template>
       </v-simple-table>
 
+      <div class="text-right my-2">
+        <SalonFormDialog
+          :salon="salon"
+          @updated-salon="updateSalon"
+        >
+          <template v-slot:button="{ on }">
+            <v-btn color="success" v-on="on">
+              編集
+            </v-btn>
+          </template>
+          <template v-slot:headerText>
+            美容室情報編集
+          </template>
+          <template v-slot:submitText>
+            更新する
+          </template>
+        </SalonFormDialog>
+        <ConfirmDialog @confirmed="deleteSalon">
+          <template v-slot:confirmText>
+            「{{ salon.salon_name }}」を削除してもよろしいですか？
+          </template>
+        </ConfirmDialog>
+      </div>
+
       <div class="mt-5">
         <v-file-input
           v-model="formFile"
@@ -62,9 +86,15 @@
 
 <script>
 import firebase from '@/plugins/firebase'
+import SalonFormDialog from '~/components/SalonFormDialog.vue'
+import ConfirmDialog from '~/components/ConfirmDialog.vue'
 
 export default {
   name: 'SalonShow',
+  components: {
+    SalonFormDialog,
+    ConfirmDialog
+  },
   async asyncData ({ params, error }) {
     let salon
     await firebase.firestore().collection('salons').doc(params.id).get()
@@ -193,6 +223,17 @@ export default {
         .catch((e) => {
           console.error(e)
         })
+    },
+    updateSalon () {
+      firebase.firestore().collection('salons').doc(this.salon.id).get()
+        .then((doc) => {
+          this.salon = Object.assign({ id: doc.id }, doc.data())
+        })
+        .catch((e) => {
+          console.error(e)
+        })
+    },
+    deleteSalon () {
     }
   }
 }
