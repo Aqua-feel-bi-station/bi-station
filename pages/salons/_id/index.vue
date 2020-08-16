@@ -3,9 +3,9 @@
     justify="center"
   >
     <v-col cols="12" md="10">
-      <h1>{{ salon.salon_name }}</h1>
-      <div class="mt-2 text-right">
-        登録日: {{ salon.created_at.toDate() }}
+      <h1 class="text-h5 mb-3">{{ salon.salon_name }}</h1>
+      <div class="text-right">
+        登録日: {{ salonCreatedAt }}
       </div>
       <v-simple-table class="mt-2 elevation-1">
         <template v-slot:default>
@@ -50,7 +50,7 @@
       </div>
 
       <div class="mt-5">
-        <h3>美容室の画像</h3>
+        <h3 class="text-h6">美容室の画像</h3>
         <v-file-input
           v-model="formFile"
           accept="image/*"
@@ -72,7 +72,7 @@
               <img :src="url" class="image">
             </span>
             <v-btn small icon @click="deleteImage(id)">
-              <v-icon small>mdi-close-circle-outline</v-icon>
+              <v-icon >mdi-close-circle-outline</v-icon>
             </v-btn>
           </span>
         </v-card>
@@ -167,6 +167,10 @@ export default {
     },
     imagesCount () {
       return this.salon.images ? Object.keys(this.salon.images).length : 0
+    },
+    salonCreatedAt () {
+      // toDate()ではエラーが発生したため
+      return this.$dayjs(this.salon.created_at.seconds * 1000).format('YYYY年MM月DD日')
     }
   },
   methods: {

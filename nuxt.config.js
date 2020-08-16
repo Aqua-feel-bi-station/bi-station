@@ -49,6 +49,7 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
+    '~/plugins/dayjs.js'
   ],
   /*
   ** Auto import components

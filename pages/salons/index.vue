@@ -3,18 +3,21 @@
     justify="center"
   >
     <v-col cols="12" md="10">
-      <h1 class="mb-2">美容室一覧</h1>
+      <h1 class="mb-5 text-h5">美容室一覧</h1>
       <SalonFormDialog />
 
       <v-data-table
         :headers="headers"
         :items="salons"
-        class="elevation-1 mt-3"
+        class="elevation-1 mt-4"
       >
         <template v-slot:item.name="{ item }">
           <nuxt-link :to="`/salons/${item.id}`" class="table-link d-flex align-center">
             {{ item.salon_name }}
           </nuxt-link>
+        </template>
+        <template v-slot:item.created_at="{ item }">
+          {{ timestampToDate(item.created_at) }}
         </template>
         <template v-slot:item.buttons="{ item }">
           <span class="d-flex justify-end">
@@ -60,8 +63,13 @@ export default {
         {
           text: '店舗名',
           value: 'name',
-          width: '65%',
+          width: '40%',
           sortable: false
+        },
+        {
+          text: '登録日',
+          value: 'created_at',
+          width: '25%'
         },
         {
           text: '',
@@ -73,9 +81,17 @@ export default {
       listener: null
     }
   },
+  computed: {
+    timestampToDate () {
+      return (timestamp) => {
+        return timestamp ?
+          this.$dayjs(timestamp.seconds * 1000).format('YYYY/MM/DD') :
+          ''
+      }
+    }
+  },
   mounted () {
-    console.log(firebase.firestore().collection('salons'))
-    this.listener = firebase.firestore().collection('salons')
+    this.listener = firebase.firestore().collection('salons').orderBy('created_at', 'desc')
       .onSnapshot((querySnapshot) => {
         this.salons = []
         querySnapshot.forEach((doc) => {
