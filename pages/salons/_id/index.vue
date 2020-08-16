@@ -4,7 +4,10 @@
   >
     <v-col cols="12" md="10">
       <h1>{{ salon.salon_name }}</h1>
-      <v-simple-table class="mt-3 elevation-1">
+      <div class="mt-2 text-right">
+        登録日: {{ salon.created_at.toDate() }}
+      </div>
+      <v-simple-table class="mt-2 elevation-1">
         <template v-slot:default>
           <tbody>
             <tr v-for="item in salonItems" :key="item.label">
@@ -23,7 +26,7 @@
         </template>
       </v-simple-table>
 
-      <div class="text-right my-2">
+      <div class="text-right mt-4">
         <SalonFormDialog
           :salon="salon"
           @update-salon="updateSalon"
@@ -47,12 +50,13 @@
       </div>
 
       <div class="mt-5">
+        <h3>美容室の画像</h3>
         <v-file-input
           v-model="formFile"
           accept="image/*"
-          placeholder="美容室の画像を追加する"
+          placeholder="画像を追加する（最大3枚）"
           :rules="imageRules"
-          show-size
+          :disabled="imagesCount >= 3"
           prepend-icon="mdi-camera"
           @change="uploadImage"
         />
@@ -61,7 +65,7 @@
           :value="percentage"
         />
         <v-card
-          class="d-flex"
+          class="d-flex flex-wrap"
         >
           <span v-for="(url, id) in salon.images" :key="id">
             <span class="image-span mt-2 ml-2">
@@ -74,10 +78,8 @@
         </v-card>
       </div>
 
-      <div class="text-right py-5">
-        <NuxtLink to="/salons">
-          戻る
-        </NuxtLink>
+      <div class="text-right pt-8">
+        <v-btn to="/salons">戻る</v-btn>
       </div>
     </v-col>
   </v-row>
@@ -119,6 +121,7 @@ export default {
   },
   computed: {
     salonItems () {
+      const unregistered = '(未登録)'
       return [
         {
           label: '店舗名',
@@ -134,34 +137,41 @@ export default {
         },
         {
           label: '創立',
-          data: `${this.salon.establishment_year}年${this.salon.establishment_month}月`
+          data: this.salon.establishment_year && this.salon.establishment_month ?
+            `${this.salon.establishment_year}年${this.salon.establishment_month}月` :
+            unregistered
         },
         {
           label: '代表者',
-          data: `${this.salon.representative_last} ${this.salon.representative_first}`
+          data: this.salon.representative_last && this.salon.representative_first ?
+            `${this.salon.representative_last} ${this.salon.representative_first}` :
+            unregistered
         },
         {
           label: '資本金',
-          data: `${this.salon.capital}円`
+          data: this.salon.capital ? `${this.salon.capital}円` : unregistered
         },
         {
           label: '従業員数',
-          data: `${this.salon.employee_number} 名`
+          data: this.salon.employee_number ? `${this.salon.employee_number} 名` : unregistered
         },
         {
           label: '業務内容',
-          data: this.salon.job_description
+          data: this.salon.job_description || unregistered
         },
         {
           label: 'ホームページURL',
-          data: this.salon.home_page_url
+          data: this.salon.home_page_url || unregistered
         }
       ]
+    },
+    imagesCount () {
+      return this.salon.images ? Object.keys(this.salon.images).length : 0
     }
   },
   methods: {
     uploadImage (file) {
-      if (!file || file.size > 5000000) { return }
+      if (!file || file.size > 5000000 || this.imagesCount >= 3) { return }
 
       const imageId = `${this.salon.id}-${file.name}`
       const storageRef = firebase.storage().ref(`salon_images/${imageId}`)
@@ -235,7 +245,7 @@ export default {
 <style scoped>
 .image-span {
   display: inline-block;
-  height: 160px;
+  height: 200px;
 }
 .image {
   height: 100%;

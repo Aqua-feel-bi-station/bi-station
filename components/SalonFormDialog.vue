@@ -206,10 +206,16 @@ export default {
       this.isLoading = true
 
       const salonRef =
-        this.salon ? firebase.firestore().collection('salons').doc(this.salon.id) : firebase.firestore().collection('salons').doc()
+        this.salon ?
+        firebase.firestore().collection('salons').doc(this.salon.id) :
+        firebase.firestore().collection('salons').doc()
+
+      const created_at =
+        this.salon.created_at || firebase.firestore.FieldValue.serverTimestamp()
 
       salonRef.set({
         id: salonRef.id,
+        created_at,
         ...this.fieldData
       })
         .then(() => {

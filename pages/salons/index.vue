@@ -74,6 +74,7 @@ export default {
     }
   },
   mounted () {
+    console.log(firebase.firestore().collection('salons'))
     this.listener = firebase.firestore().collection('salons')
       .onSnapshot((querySnapshot) => {
         this.salons = []
