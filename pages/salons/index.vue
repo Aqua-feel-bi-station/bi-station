@@ -3,20 +3,22 @@
     justify="center"
   >
     <v-col cols="12" md="10">
-      <h1>美容室一覧</h1>
+      <h1 class="mb-2">美容室一覧</h1>
       <SalonFormDialog />
+
       <v-data-table
         :headers="headers"
         :items="salons"
-        item-key="name"
-        class="elevation-1"
+        class="elevation-1 mt-3"
       >
         <template v-slot:item.name="{ item }">
-          <div class="d-flex justify-space-between align-center">
-            <nuxt-link :to="`/salons/${item.id}`">
-              {{ item.salon_name }}
-            </nuxt-link>
-            <span>
+          <nuxt-link :to="`/salons/${item.id}`" class="table-link d-flex align-center">
+            {{ item.salon_name }}
+          </nuxt-link>
+        </template>
+        <template v-slot:item.buttons="{ item }">
+          <span class="d-flex justify-end">
+            <span class="mr-2">
               <SalonFormDialog :salon="item">
                 <template v-slot:button="{ on }">
                   <v-btn color="success" v-on="on">
@@ -30,15 +32,14 @@
                   更新する
                 </template>
               </SalonFormDialog>
-              <ConfirmDialog @confirmed="deleteSalon(item.id)">
-                <template v-slot:confirmText>
-                  「{{ item.salon_name }}」を削除してもよろしいですか？
-                </template>
-              </ConfirmDialog>
             </span>
-          </div>
+            <span>
+              <SalonDeleteConfirm :salon="item" />
+            </span>
+          </span>
         </template>
       </v-data-table>
+
     </v-col>
   </v-row>
 </template>
@@ -46,20 +47,26 @@
 <script>
 import firebase from '@/plugins/firebase'
 import SalonFormDialog from '~/components/SalonFormDialog.vue'
-import ConfirmDialog from '~/components/ConfirmDialog.vue'
+import SalonDeleteConfirm from '~/components/SalonDeleteConfirm.vue'
 
 export default {
   components: {
     SalonFormDialog,
-    ConfirmDialog
+    SalonDeleteConfirm
   },
   data () {
     return {
       headers: [
         {
           text: '店舗名',
-          align: 'start',
-          value: 'name'
+          value: 'name',
+          width: '65%',
+          sortable: false
+        },
+        {
+          text: '',
+          value: 'buttons',
+          sortable: false
         }
       ],
       salons: [],
@@ -67,30 +74,23 @@ export default {
     }
   },
   mounted () {
-    const db = firebase.firestore()
-    this.listener = db.collection('salons')
+    this.listener = firebase.firestore().collection('salons')
       .onSnapshot((querySnapshot) => {
         this.salons = []
         querySnapshot.forEach((doc) => {
-          const salon = Object.assign({ id: doc.id }, doc.data())
-          this.salons.push(salon)
+          this.salons.push(doc.data())
         })
       })
   },
   beforeDestroy () {
     this.listener()
-  },
-  methods: {
-    deleteSalon (id) {
-      const db = firebase.firestore()
-      db.collection('salons').doc(id).delete()
-        .then(() => {
-          console.log('Document successfully deleted!')
-        })
-        .catch((e) => {
-          console.error('Error removing document: ', e)
-        })
-    }
   }
 }
 </script>
+
+<style scoped>
+.table-link {
+  width: 100%;
+  height: 100%;
+}
+</style>
