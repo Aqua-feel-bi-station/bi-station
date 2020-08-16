@@ -4,7 +4,7 @@
   >
     <v-col cols="12" md="10">
       <h1>{{ salon.salon_name }}</h1>
-      <v-simple-table>
+      <v-simple-table class="mt-3 elevation-1">
         <template v-slot:default>
           <tbody>
             <tr v-for="item in salonItems" :key="item.label">
@@ -26,7 +26,7 @@
       <div class="text-right my-2">
         <SalonFormDialog
           :salon="salon"
-          @updated-salon="updateSalon"
+          @update-salon="updateSalon"
         >
           <template v-slot:button="{ on }">
             <v-btn color="success" v-on="on">
@@ -40,11 +40,10 @@
             更新する
           </template>
         </SalonFormDialog>
-        <ConfirmDialog @confirmed="deleteSalon">
-          <template v-slot:confirmText>
-            「{{ salon.salon_name }}」を削除してもよろしいですか？
-          </template>
-        </ConfirmDialog>
+        <SalonDeleteConfirm
+          :salon="salon"
+          @delete-salon="deleteSalon"
+        />
       </div>
 
       <div class="mt-5">
@@ -64,7 +63,7 @@
         <v-card
           class="d-flex"
         >
-          <span v-for="(url, id) in salonImages" :key="id">
+          <span v-for="(url, id) in salon.images" :key="id">
             <span class="image-span mt-2 ml-2">
               <img :src="url" class="image">
             </span>
@@ -86,21 +85,21 @@
 
 <script>
 import firebase from '@/plugins/firebase'
+import cloneDeep from 'lodash.clonedeep'
 import SalonFormDialog from '~/components/SalonFormDialog.vue'
-import ConfirmDialog from '~/components/ConfirmDialog.vue'
+import SalonDeleteConfirm from '~/components/SalonDeleteConfirm.vue'
 
 export default {
   name: 'SalonShow',
   components: {
     SalonFormDialog,
-    ConfirmDialog
+    SalonDeleteConfirm
   },
-  async asyncData ({ params, error }) {
-    let salon
-    await firebase.firestore().collection('salons').doc(params.id).get()
+  asyncData ({ params, error }) {
+    return firebase.firestore().collection('salons').doc(params.id).get()
       .then((doc) => {
         if (doc.exists) {
-          salon = Object.assign({ id: doc.id }, doc.data())
+          return { salon: doc.data() }
         } else {
           throw new Error('ページが見つかりません')
         }
@@ -108,7 +107,6 @@ export default {
       .catch((e) => {
         error({ statusCode: 404, message: 'ページが見つかりません' })
       })
-    return { salon }
   },
   data () {
     return {
@@ -159,20 +157,16 @@ export default {
           data: this.salon.home_page_url
         }
       ]
-    },
-    salonImages () {
-      return this.salon.images || {}
     }
   },
   methods: {
-    async uploadImage (file) {
+    uploadImage (file) {
       if (!file || file.size > 5000000) { return }
 
       const imageId = `${this.salon.id}-${file.name}`
       const storageRef = firebase.storage().ref(`salon_images/${imageId}`)
-      const task = storageRef.put(file)
 
-      await task.on('state_changed',
+      storageRef.put(file).on('state_changed',
         (snapshot) => { // progress
           const percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
           this.percentage = percentage
@@ -183,42 +177,40 @@ export default {
         },
 
         () => { // completed
-          const storageRef = firebase.storage().ref(`salon_images/${imageId}`)
-          storageRef.getDownloadURL().then((url) => {
-            const salonRef = firebase.firestore().collection('salons').doc(this.salon.id)
-            salonRef.update({
-              images: {
+          storageRef.getDownloadURL()
+            .then((url) => {
+              const updatedImages = {
                 ...this.salon.images,
                 [imageId]: url
               }
-            }).then(() => {
-              this.salon.images = {
-                ...this.salon.images,
-                [imageId]: url
-              }
+
+              this.salon.images = updatedImages
+              return firebase.firestore().collection('salons').doc(this.salon.id).update({
+                images: updatedImages
+              })
+            })
+            .then(() => {
               this.percentage = 0
               this.formFile = null
             })
-          })
+            .catch((e) => {
+              console.error(e)
+            })
         }
       )
     },
     deleteImage (imageId) {
-      const storageRef = firebase.storage().ref(`salon_images/${imageId}`)
-      storageRef.delete()
+      firebase.storage().ref(`salon_images/${imageId}`).delete()
         .then(() => {
-          const salonRef = firebase.firestore().collection('salons').doc(this.salon.id)
-          const subtractedImages = {}
-          for (const id in this.salon.images) {
-            if (id === imageId) { continue }
+          const remainingImages = cloneDeep(this.salon.images)
+          delete remainingImages[imageId]
 
-            subtractedImages[id] = this.salon.images[id]
-          }
-          salonRef.update({
-            images: subtractedImages
-          }).then(() => {
-            this.$delete(this.salon.images, imageId)
+          return firebase.firestore().collection('salons').doc(this.salon.id).update({
+            images: remainingImages
           })
+        })
+        .then(() => {
+          this.$delete(this.salon.images, imageId)
         })
         .catch((e) => {
           console.error(e)
@@ -227,31 +219,20 @@ export default {
     updateSalon () {
       firebase.firestore().collection('salons').doc(this.salon.id).get()
         .then((doc) => {
-          this.salon = Object.assign({ id: doc.id }, doc.data())
+          this.salon = doc.data()
         })
         .catch((e) => {
           console.error(e)
         })
     },
     deleteSalon () {
+      this.$router.push('/salons')
     }
   }
 }
 </script>
 
-<style scoped lang="scss">
-.upload-btn {
-  cursor: pointer;
-  display: inline-block;
-  margin-top: 8px;
-  border: 1px solid #bbb;
-  border-radius: 4px;
-  padding: 8px 12px;
-  background: #efefef;
-  &:hover {
-    background: #dfdfdf;
-  }
-}
+<style scoped>
 .image-span {
   display: inline-block;
   height: 160px;
@@ -260,7 +241,5 @@ export default {
   height: 100%;
   max-width: 100%;
   max-height: 100%;
-  // width: auto;
-  // height: auto;
 }
 </style>

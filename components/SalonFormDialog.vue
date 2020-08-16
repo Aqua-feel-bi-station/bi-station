@@ -144,6 +144,20 @@
 import firebase from '@/plugins/firebase'
 import cloneDeep from 'lodash.clonedeep'
 
+const initialFieldData = {
+  salon_name: '',
+  address: '',
+  company_name: '',
+  establishment_year: '',
+  establishment_month: '',
+  representative_last: '',
+  representative_first: '',
+  capital: '',
+  employee_number: '',
+  job_description: '',
+  home_page_url: ''
+}
+
 export default {
   props: {
     salon: Object
@@ -152,19 +166,7 @@ export default {
     return {
       dialog: false,
       isLoading: false,
-      fieldData: {
-        salon_name: '',
-        address: '',
-        company_name: '',
-        establishment_year: '',
-        establishment_month: '',
-        representative_last: '',
-        representative_first: '',
-        capital: '',
-        employee_number: '',
-        job_description: '',
-        home_page_url: ''
-      },
+      fieldData: { ...initialFieldData },
       requireNameRules: [
         v => !!v?.trim() || 'この項目は必須です',
         v => v?.length <= 255 || '255文字以内で入力してください'
@@ -179,15 +181,15 @@ export default {
   },
   watch: {
     dialog (isOpen) {
-      if (!isOpen) {
-        this.$refs.form.resetValidation()
-      } else {
+      if (isOpen) {
         this.$nextTick(() => {
           this.$vuetify.goTo(0, {
             container: '.v-dialog',
             duration: 0
           })
         })
+      } else {
+        this.$refs.form.resetValidation()
       }
     }
   },
@@ -202,34 +204,27 @@ export default {
       if (!this.$refs.form.validate()) { return }
 
       this.isLoading = true
-      const db = firebase.firestore()
 
-      let salonRef
-      if (this.salon) {
-        salonRef = db.collection('salons').doc(this.salon.id)
-      } else {
-        salonRef = db.collection('salons').doc()
-      }
-      salonRef.set(this.fieldData)
+      const salonRef =
+        this.salon ? firebase.firestore().collection('salons').doc(this.salon.id) : firebase.firestore().collection('salons').doc()
+
+      salonRef.set({
+        id: salonRef.id,
+        ...this.fieldData
+      })
         .then(() => {
           if (!this.salon) {
-            // this.$refs.form.reset() // 中身がundefinedになってしまう
-            this.clearFields()
+            this.fieldData = { ...initialFieldData }
           }
-          this.$emit('updated-salon')
+          this.$emit('update-salon') // 詳細画面でページ更新のため
           this.dialog = false
         })
-        .catch((error) => {
-          console.error('Error adding document: ', error)
+        .catch((e) => {
+          console.error(e)
         })
         .finally(() => {
           this.isLoading = false
         })
-    },
-    clearFields () {
-      for (const key in this.fieldData) {
-        this.fieldData[key] = ''
-      }
     }
   }
 }

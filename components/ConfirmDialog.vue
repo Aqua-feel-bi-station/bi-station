@@ -48,9 +48,6 @@
 
 export default {
   name: 'ConfirmDialog',
-  props: {
-    salon: Object
-  },
   data () {
     return {
       dialog: false
