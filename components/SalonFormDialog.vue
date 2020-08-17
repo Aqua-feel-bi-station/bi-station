@@ -6,7 +6,7 @@
     <template v-slot:activator="{ on }">
       <slot name="button" :on="on">
         <v-btn color="primary" v-on="on">
-          追加
+          美容室を追加
         </v-btn>
       </slot>
     </template>
@@ -28,7 +28,10 @@
           >
             <template v-slot:label>
               店舗名
-              <span class="error--text caption">（必須）</span>
+              <span
+                class="caption"
+                :class="{ 'error--text': !fieldData.salon_name.trim }"
+              >（必須）</span>
             </template>
           </v-text-field>
 
@@ -40,7 +43,10 @@
           >
             <template v-slot:label>
               店舗住所
-              <span class="error--text caption">（必須）</span>
+              <span
+                class="caption"
+                :class="{ 'error--text': !fieldData.address.trim }"
+              >（必須）</span>
             </template>
           </v-text-field>
 
@@ -52,7 +58,10 @@
           >
             <template v-slot:label>
               企業名
-              <span class="error--text caption">（必須）</span>
+              <span
+                class="caption"
+                :class="{ 'error--text': !fieldData.company_name.trim }"
+              >（必須）</span>
             </template>
           </v-text-field>
 

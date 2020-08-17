@@ -43,20 +43,24 @@
             更新する
           </template>
         </SalonFormDialog>
-        <SalonDeleteConfirm
-          :salon="salon"
-          @delete-salon="deleteSalon"
-        />
+        <span class="ml-1">
+          <SalonDeleteConfirm
+            :salon="salon"
+            @delete-salon="deleteSalon"
+          />
+        </span>
       </div>
+
+      <v-divider class="mt-7" />
 
       <div class="mt-5">
         <h3 class="text-h6">美容室の画像</h3>
         <v-file-input
           v-model="formFile"
           accept="image/*"
-          placeholder="画像を追加する（最大3枚）"
+          placeholder="画像を追加する（最大1枚）"
           :rules="imageRules"
-          :disabled="imagesCount >= 3"
+          :disabled="imagesCount >= 1"
           prepend-icon="mdi-camera"
           @change="uploadImage"
         />
@@ -65,7 +69,7 @@
           :value="percentage"
         />
         <v-card
-          class="d-flex flex-wrap"
+          class="d-flex flex-wrap justify-center"
         >
           <span v-for="(url, id) in salon.images" :key="id">
             <span class="image-span mt-2 ml-2">
@@ -78,8 +82,15 @@
         </v-card>
       </div>
 
+      <v-divider class="mt-7" />
+
+      <SalonQjins
+        class="mt-6"
+        :salonId="salon.id"
+      />
+
       <div class="text-right pt-8">
-        <v-btn to="/salons">戻る</v-btn>
+        <v-btn to="/salons">一覧へ戻る</v-btn>
       </div>
     </v-col>
   </v-row>
@@ -90,12 +101,14 @@ import firebase from '@/plugins/firebase'
 import cloneDeep from 'lodash.clonedeep'
 import SalonFormDialog from '~/components/SalonFormDialog.vue'
 import SalonDeleteConfirm from '~/components/SalonDeleteConfirm.vue'
+import SalonQjins from '~/components/SalonQjins.vue'
 
 export default {
   name: 'SalonShow',
   components: {
     SalonFormDialog,
-    SalonDeleteConfirm
+    SalonDeleteConfirm,
+    SalonQjins
   },
   asyncData ({ params, error }) {
     return firebase.firestore().collection('salons').doc(params.id).get()
@@ -175,15 +188,14 @@ export default {
   },
   methods: {
     uploadImage (file) {
-      if (!file || file.size > 5000000 || this.imagesCount >= 3) { return }
+      if (!file || file.size > 5000000 || this.imagesCount >= 1) { return }
 
       const imageId = `${this.salon.id}-${file.name}`
       const storageRef = firebase.storage().ref(`salon_images/${imageId}`)
 
       storageRef.put(file).on('state_changed',
         (snapshot) => { // progress
-          const percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          this.percentage = percentage
+          this.percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
         },
 
         (e) => { // error
@@ -219,7 +231,7 @@ export default {
           })
         })
         .then(() => {
-          this.$notify('美容室の画像を1枚削除しました')
+          this.$notify('美容室の画像を削除しました')
         })
         .catch((e) => {
           this.$errorNotify()
