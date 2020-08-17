@@ -3,6 +3,6 @@ import 'dayjs/locale/ja'
 
 dayjs.locale('ja')
 
-export default ({ app }, inject) => {
+export default ({}, inject) => {
   inject('dayjs', string => dayjs(string))
 }

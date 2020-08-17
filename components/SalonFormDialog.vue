@@ -235,8 +235,10 @@ export default {
           }
           this.$emit('update-salon') // 詳細画面でページ更新のため
           this.dialog = false
+          this.$notify('美容室情報を登録しました')
         })
         .catch((e) => {
+          this.$errorNotify()
           console.error(e)
         })
         .finally(() => {

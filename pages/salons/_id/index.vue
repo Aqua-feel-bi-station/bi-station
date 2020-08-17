@@ -193,21 +193,18 @@ export default {
         () => { // completed
           storageRef.getDownloadURL()
             .then((url) => {
-              const updatedImages = {
-                ...this.salon.images,
-                [imageId]: url
-              }
-
-              this.salon.images = updatedImages
+              this.$set(this.salon, 'images', { [imageId]: url })
               return firebase.firestore().collection('salons').doc(this.salon.id).update({
-                images: updatedImages
+                images: this.salon.images
               })
             })
             .then(() => {
               this.percentage = 0
               this.formFile = null
+              this.$notify('美容室の画像を登録しました')
             })
             .catch((e) => {
+              this.$errorNotify()
               console.error(e)
             })
         }
@@ -216,17 +213,16 @@ export default {
     deleteImage (imageId) {
       firebase.storage().ref(`salon_images/${imageId}`).delete()
         .then(() => {
-          const remainingImages = cloneDeep(this.salon.images)
-          delete remainingImages[imageId]
-
+          this.$delete(this.salon.images, imageId)
           return firebase.firestore().collection('salons').doc(this.salon.id).update({
-            images: remainingImages
+            images: this.salon.images
           })
         })
         .then(() => {
-          this.$delete(this.salon.images, imageId)
+          this.$notify('美容室の画像を1枚削除しました')
         })
         .catch((e) => {
+          this.$errorNotify()
           console.error(e)
         })
     },
@@ -236,6 +232,7 @@ export default {
           this.salon = doc.data()
         })
         .catch((e) => {
+          this.$errorNotify()
           console.error(e)
         })
     },

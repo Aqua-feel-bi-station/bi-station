@@ -49,7 +49,8 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
-    '~/plugins/dayjs.js'
+    '~/plugins/dayjs.js',
+    '~/plugins/utils.js'
   ],
   /*
   ** Auto import components
@@ -70,7 +71,8 @@ export default {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
-    '@nuxtjs/dotenv'
+    '@nuxtjs/dotenv',
+    ['vuetify-dialog/nuxt', { property: '$dialog' }]
   ],
   /*
   ** Axios module configuration
@@ -107,6 +109,11 @@ export default {
   ** See https://nuxtjs.org/api/configuration-build/
   */
   build: {
+    extend(config, ctx) {
+      if (ctx.isDev && ctx.isClient) {
+        config.devtool = 'inline-cheap-module-source-map'
+      }
+    }
   },
   env: {
     API_KEY,
