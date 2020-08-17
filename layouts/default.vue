@@ -110,6 +110,11 @@ export default {
           icon: 'mdi-store',
           title: 'Salons',
           to: '/salons'
+        },
+        {
+          icon: 'mdi-store',
+          title: 'Qjin',
+          to: '/Qjin'
         }
       ],
       miniVariant: false,
