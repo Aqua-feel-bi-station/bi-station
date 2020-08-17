@@ -30,8 +30,10 @@ export default {
             firebase.storage().ref(`salon_images/${imageId}`).delete()
           })
           this.$emit('delete-salon')
+          this.$notify('美容室情報を削除しました')
         })
         .catch((e) => {
+          this.$errorNotify()
           console.error(e)
         })
     }
