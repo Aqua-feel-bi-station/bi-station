@@ -113,6 +113,11 @@ export default {
       if (ctx.isDev && ctx.isClient) {
         config.devtool = 'inline-cheap-module-source-map'
       }
+    },
+    babel: {
+      plugins: [
+        '@babel/plugin-proposal-optional-chaining'
+      ]
     }
   },
   env: {
