@@ -1,6 +1,6 @@
    <template>
        <div>
-              <v-card raised width="200" class="ma-2">
+          <v-card raised width="200" class="ma-2">
             <v-card-title class="headline grey lighten-2">
               募集要項作成
             </v-card-title>
@@ -20,6 +20,19 @@
               required
             ></v-text-field>
 
+            <v-file-input
+            v-model="formFile"
+            accept="image/*"
+            placeholder="画像を追加する（最大3枚）"
+            :rules="imageRules"
+            prepend-icon="mdi-camera"
+            @change="uploadImage"
+          />
+          <v-progress-linear
+            v-if="percentage !== 0"
+            :value="percentage"
+          />
+
             <v-text-field
               v-model.trim="fieldData.name"
               :rules="nameRules"
@@ -27,7 +40,33 @@
               required
             ></v-text-field>
 
-            
+            <v-text-field
+              v-model.trim="fieldData.need_class"
+              :rules="nameRules"
+              label="募集内容"
+              required
+            ></v-text-field>
+
+              <v-text-field
+                v-model.trim="fieldData.hire_style"
+                :rules="nameRules"
+                label="雇用形態"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model.trim="fieldData.content"
+                :rules="nameRules"
+                label="仕事内容"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model.trim="fieldData.target"
+                :rules="nameRules"
+                label="対象となる方"
+                required
+              ></v-text-field>
 
               <v-text-field
                 v-model.trim="fieldData.payment"
@@ -37,16 +76,37 @@
               ></v-text-field>
 
               <v-text-field
-                v-model.trim="fieldData.hire"
+                v-model.trim="fieldData.hour"
                 :rules="nameRules"
-                label="雇用"
+                label="勤務時間"
                 required
               ></v-text-field>
 
               <v-text-field
-                v-model.trim="fieldData.content"
+                v-model.trim="fieldData.welfale"
                 :rules="nameRules"
-                label="仕事内容"
+                label="福利厚生"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model.trim="fieldData.holiday"
+                :rules="nameRules"
+                label="休日"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model.trim="fieldData.place"
+                :rules="nameRules"
+                label="勤務地"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model.trim="fieldData.access"
+                :rules="nameRules"
+                label="アクセス"
                 required
               ></v-text-field>
 
@@ -72,15 +132,28 @@ import cloneDeep from 'lodash.clonedeep'
 const initialContents = {
     top: '',
     name: '',
-    payment: '',
-    hire: '',
+    need_class: '',
+    hire_style: '',
     content: '',
+    target: '',
+    payment: '',
+    hour: '',
+    welfare: '',
+    holiday: '',
+    place: '',
+    access: ''
 }
 
 export default {
   data () {
     return {
-      dialog: false,
+      salon: {},
+      formFile: null,
+      imageRules: [
+        v => !v || v.size <= 5000000 || '画像のサイズは5MBが上限です'
+      ],
+      percentage: 0,
+      images: [],
       fieldData: { ...initialContents },
       requireNameRules: [
         v => !!v?.trim() || 'この項目は必須です',
@@ -95,21 +168,65 @@ export default {
     }
   },
 
+  mounted () {
+    firebase.firestore().collection('salons').doc(this.$route.params.id).get()
+      .then((doc) => {
+        this.salon = doc.data()
+      })
+  },
+
 methods: {
     onSubmit () {
     //   if (!this.$refs.form.validate()) { return }
 
     //   this.isLoading = true
 
+
       const QjinRef =
-        firebase.firestore().collection('Qjins').doc()
+        firebase.firestore().collection('salons').doc(this.$route.params.id)
+          .collection('Qjins').doc()
+
+      // const imageId = `${this.salon.id}-${file.name}`
+      // const storageRef = firebase.storage().ref(`qjin_images/${file.name}`)
+
+      // storageRef.put(file).on('state_changed', //.onは４つ引数とる。自動で１００パーになったら、4番目の処理が始まる。
+      //   (snapshot) => { // progress
+      //     this.percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+      //   },
+
+      //   (e) => { // error
+      //     console.error(e)
+      //   },
+
+      //   () => { // completed
+      //     // storageRef.getDownloadURL()
+      //     //   .then((url) => {
+      //     //     this.$set(this.salon, 'images', { [imageId]: url })
+      //     //     return firebase.firestore().collection('salons').doc(this.salon.id).update({
+      //     //       images: this.salon.images
+      //     //     })
+      //     //   })
+      //     //   .then(() => {
+      //     //     this.percentage = 0
+      //     //     this.formFile = null
+      //     //     this.$notify('美容室の画像を登録しました')
+      //     //   })
+      //     //   .catch((e) => {
+      //     //     this.$errorNotify()
+      //     //     console.error(e)
+      //     //   })
+      //   }
+      // )
+
 
       QjinRef.set({
         id: QjinRef.id,
+        salon_id: this.$route.params.id,
+        salon_images: this.salon.images,
         ...this.fieldData
       })
         .then(() => {
-          this.$router.push('/Qjin') 
+          this.$router.push(`/salons/${this.$route.params.id}/Qjin/${QjinRef.id}`) 
         })
         .catch((e) => {
           console.error(e)
@@ -117,8 +234,29 @@ methods: {
         .finally(() => {
         //   this.isLoading = false
         })
-    }
-  }
+    },
+    uploadImage (file) {
+      if (!file || file.size > 5000000) { return }
 
+      this.images.push(file)
+
+    },
+    deleteImage (imageId) {
+      firebase.storage().ref(`salon_images/${imageId}`).delete()
+        .then(() => {
+          this.$delete(this.salon.images, imageId)
+          return firebase.firestore().collection('salons').doc(this.salon.id).update({
+            images: this.salon.images
+          })
+        })
+        .then(() => {
+          this.$notify('美容室の画像を1枚削除しました')
+        })
+        .catch((e) => {
+          this.$errorNotify()
+          console.error(e)
+        })
+    },
+  }
 }
 </script>

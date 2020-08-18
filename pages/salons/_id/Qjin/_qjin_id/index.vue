@@ -26,42 +26,44 @@ import firebase from '@/plugins/firebase'
         qjin: {},
       }
     },
+
     computed: {
       contents () {
         return [
+          {
+            label: '店舗メッセージ',
+            data: this.qjin.top
+          },
           {
             label: '店舗名',
             data: this.qjin.name
           },
           {
             label: '募集職種',
-            data: this.qjin.name
+            data: this.qjin.need_class
           },
           {
             label: '雇用形態',
-            data: '正社員'
+            data: this.qjin.hire_style
           },
            {
             label: '仕事内容',
-            data: `カット、カラー、シャンプー、ブロー、パーマ
-                    などの施術を行い、ヘアスタイルを作り上げる`
+            data: this.qjin.content
           },
            {
             label: '対象となる方',
-            data: '美容師免許'
+            data: this.qjin.target
           },
           {
             label: '勤務時間',
-            data: `10:00〜20:00
-
-            【正社員】フルタイム勤務
-            【準社員】フルタイムより1時間～2時間短い勤務`
+            data: this.qjin.hour
           },
         ]
-      }
+      },
     },
     mounted () {
-      firebase.firestore().collection('Qjins').doc(this.$route.params.id).get()
+      firebase.firestore().collection('salons').doc(this.$route.params.id)
+        .collection('Qjins').doc(this.$route.params.qjin_id).get()
         .then((doc) => {
           this.qjin = doc.data()
           // if (doc.exists) {

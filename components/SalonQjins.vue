@@ -18,7 +18,7 @@
       <template v-slot:item.top="{ item }">
         <NuxtLink
           class="qjin-link d-flex align-center"
-          :to="`/Qjin/${item.id}`"
+          :to="`/salons/${item.salon_id}/Qjin/${item.id}`"
         >
           {{ item.top }}
         </NuxtLink>

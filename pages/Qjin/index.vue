@@ -17,7 +17,7 @@ export default {
     }
   },
   mounted () {
-    this.listener = firebase.firestore().collection('Qjins')
+    this.listener = firebase.firestore().collectionGroup('Qjins')
       .onSnapshot((querySnapshot) => {
         this.qjins = []
         querySnapshot.forEach((doc) => {
