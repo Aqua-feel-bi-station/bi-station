@@ -1,68 +1,9 @@
 <template>
-<div>
-   <NuxtLink to="salons/aaa/Qjin/new">
-          追加
-        </NuxtLink>
-  <v-simple-table>
-    <template v-slot:default>
-      <thead>
-
-            <tr>
-              <th class="text-center">
-                店舗メッセージ
-              </th>
-              <th class="text-center">
-                店舗名
-              </th>
-              <th class="text-center">
-                募集職種
-              </th>
-              <th class="text-center">
-                雇用形態
-              </th>
-              <th class="text-center">
-                募集要項
-              </th>
-              <th class="text-center">
-                募集要項
-              </th>
-          
-            </tr>
-      </thead>
-      <tbody>
-          <tr v-for="item in qjins" :key="item.id">
-            <td>
-              <NuxtLink :to="`/Qjin/${item.id}`">
-                {{ item.top }}
-              </NuxtLink>
-          </td>
-          <td>{{ item.name }}</td>
-          <td>{{ item.payment }}</td>
-          <td>{{ item.hire }}</td>
-          <td>{{ item.content }}</td>
-
-         <v-col class="text-right" cols="12" sm="4">
-            <div class="my-2">
-              <v-btn depressed small :to="`/Qjin/edit/${item.id}`">編集</v-btn>
-            </div>
-            <div class="my-2">
-              <v-btn depressed small　@click="deleteQjin(item.id)">削除</v-btn>
-            </div>
-        </v-col>
-
-        </tr>
-      </tbody>
-
-<!-- 　　　 <div class="text-center">
-        <v-pagination
-          v-model="page"
-          :length="6"
-        ></v-pagination>
-      </div> -->
-    
-    </template>
-  </v-simple-table>
-  </div>
+  <v-row justify="center">
+    <v-col cols="12" md="10">
+      <h1 class="mb-5 text-h5">求人票一覧</h1>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

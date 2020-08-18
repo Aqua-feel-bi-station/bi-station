@@ -12,9 +12,9 @@
         class="elevation-1 mt-4"
       >
         <template v-slot:item.name="{ item }">
-          <nuxt-link :to="`/salons/${item.id}`" class="table-link d-flex align-center">
+          <NuxtLink :to="`/salons/${item.id}`" class="table-link d-flex align-center">
             {{ item.salon_name }}
-          </nuxt-link>
+          </NuxtLink>
         </template>
         <template v-slot:item.created_at="{ item }">
           {{ timestampToDate(item.created_at) }}
@@ -63,13 +63,18 @@ export default {
         {
           text: '店舗名',
           value: 'name',
-          width: '40%',
+          width: '30%',
+          sortable: false
+        },
+        {
+          text: '店舗住所',
+          value: 'address',
+          width: '30%',
           sortable: false
         },
         {
           text: '登録日',
-          value: 'created_at',
-          width: '25%'
+          value: 'created_at'
         },
         {
           text: '',
