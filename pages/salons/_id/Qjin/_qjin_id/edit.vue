@@ -27,6 +27,34 @@
               required
             ></v-text-field>
 
+            <v-text-field
+              v-model.trim="fieldData.need_class"
+              :rules="nameRules"
+              label="募集内容"
+              required
+            ></v-text-field>
+
+              <v-text-field
+                v-model.trim="fieldData.hire_style"
+                :rules="nameRules"
+                label="雇用形態"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model.trim="fieldData.content"
+                :rules="nameRules"
+                label="仕事内容"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model.trim="fieldData.target"
+                :rules="nameRules"
+                label="対象となる方"
+                required
+              ></v-text-field>
+
               <v-text-field
                 v-model.trim="fieldData.payment"
                 :rules="nameRules"
@@ -35,16 +63,37 @@
               ></v-text-field>
 
               <v-text-field
-                v-model.trim="fieldData.hire"
+                v-model.trim="fieldData.hour"
                 :rules="nameRules"
-                label="雇用"
+                label="勤務時間"
                 required
               ></v-text-field>
 
               <v-text-field
-                v-model.trim="fieldData.content"
+                v-model.trim="fieldData.welfale"
                 :rules="nameRules"
-                label="仕事内容"
+                label="福利厚生"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model.trim="fieldData.holiday"
+                :rules="nameRules"
+                label="休日"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model.trim="fieldData.place"
+                :rules="nameRules"
+                label="勤務地"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model.trim="fieldData.access"
+                :rules="nameRules"
+                label="アクセス"
                 required
               ></v-text-field>
 
@@ -70,9 +119,16 @@ import cloneDeep from 'lodash.clonedeep'
 const initialContents = {
     top: '',
     name: '',
-    payment: '',
-    hire: '',
+    need_class: '',
+    hire_style: '',
     content: '',
+    target: '',
+    payment: '',
+    hour: '',
+    welfare: '',
+    holiday: '',
+    place: '',
+    access: ''
 }
 
 export default {
