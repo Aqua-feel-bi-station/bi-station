@@ -1,24 +1,32 @@
    <template>
-       <div>
-          <v-card raised width="200" class="ma-2">
+       <v-row justify="center">
+    　　  <v-col cols="12" md="8">
+          <v-card raised>
             <v-card-title class="headline grey lighten-2">
               募集要項作成
             </v-card-title>
 
             <v-divider></v-divider>
 
-            <v-card-actions>
+            <v-card-text>
               
             <v-form
               ref="form"
               lazy-validation
             >
-　　　　　　　<v-text-field
-              v-model.trim="fieldData.top"
-              :rules="requireNameRules"
-              label="店舗メッセージ"
+            <v-text-field
+              v-model.trim="fieldData.title"
+              :rules="requireTitleRules"
+              label="求人タイトル"
               required
             ></v-text-field>
+
+　　　　　　　<v-textarea
+              v-model.trim="fieldData.message"
+              :rules="requireMessageRules"
+              label="店舗メッセージ"
+              required
+            ></v-textarea>
 
             <v-file-input
             v-model="formFile"
@@ -42,14 +50,14 @@
 
             <v-text-field
               v-model.trim="fieldData.need_class"
-              :rules="nameRules"
-              label="募集内容"
+              :rules="requireNameRules"
+              label="募集職種"
               required
             ></v-text-field>
 
               <v-text-field
                 v-model.trim="fieldData.hire_style"
-                :rules="nameRules"
+                :rules="requireNameRules"
                 label="雇用形態"
                 required
               ></v-text-field>
@@ -68,37 +76,38 @@
                 required
               ></v-text-field>
 
-              <v-text-field
+              <v-textarea
                 v-model.trim="fieldData.payment"
-                :rules="nameRules"
+                :rules="requireNameRules"
+                rows="3"
                 label="給与"
                 required
-              ></v-text-field>
+              ></v-textarea>
 
               <v-text-field
                 v-model.trim="fieldData.hour"
-                :rules="nameRules"
+                :rules="requireNameRules"
                 label="勤務時間"
                 required
               ></v-text-field>
 
-              <v-text-field
+              <v-textarea
                 v-model.trim="fieldData.welfale"
                 :rules="nameRules"
                 label="福利厚生"
                 required
-              ></v-text-field>
+              ></v-textarea>
 
-              <v-text-field
+              <v-textarea
                 v-model.trim="fieldData.holiday"
                 :rules="nameRules"
                 label="休日"
                 required
-              ></v-text-field>
+              ></v-textarea>
 
               <v-text-field
                 v-model.trim="fieldData.place"
-                :rules="nameRules"
+                :rules="requireNameRules"
                 label="勤務地"
                 required
               ></v-text-field>
@@ -114,13 +123,15 @@
                 color="success"
                 class="mr-4"
                 @click="onSubmit"
+                :loading="isLoading"
               >
                 作成
               </v-btn>
             </v-form>
-        </v-card-actions>
+        </v-card-text>
       </v-card>
-    </div>
+    </v-col>
+  </v-row>
 </template>
 
 
@@ -130,7 +141,8 @@ import firebase from '@/plugins/firebase'
 import cloneDeep from 'lodash.clonedeep'
 
 const initialContents = {
-    top: '',
+    title: '',
+    message: '',
     name: '',
     need_class: '',
     hire_style: '',
@@ -155,6 +167,14 @@ export default {
       percentage: 0,
       images: [],
       fieldData: { ...initialContents },
+      requireTitleRules: [
+        v => !!v?.trim() || 'この項目は必須です',
+        v => v?.length <= 45 || '45文字以内で入力してください'
+      ],
+      requireMessageRules: [
+        v => !!v?.trim() || 'この項目は必須です',
+        v => v?.length <= 4000 || '4000文字以内で入力してください'
+      ],
       requireNameRules: [
         v => !!v?.trim() || 'この項目は必須です',
         v => v?.length <= 255 || '255文字以内で入力してください'
@@ -177,9 +197,9 @@ export default {
 
 methods: {
     onSubmit () {
-    //   if (!this.$refs.form.validate()) { return }
+      if (!this.$refs.form.validate()) { return }
 
-    //   this.isLoading = true
+      this.isLoading = true
 
 
       const QjinRef =
@@ -232,7 +252,7 @@ methods: {
           console.error(e)
         })
         .finally(() => {
-        //   this.isLoading = false
+          this.isLoading = false
         })
     },
     uploadImage (file) {

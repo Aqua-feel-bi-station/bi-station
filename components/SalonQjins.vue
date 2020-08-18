@@ -15,12 +15,12 @@
       :items="qjins"
       class="elevation-1 mt-3"
     >
-      <template v-slot:item.top="{ item }">
+      <template v-slot:item.title="{ item }">
         <NuxtLink
           class="qjin-link d-flex align-center"
           :to="`/salons/${item.salon_id}/Qjin/${item.id}`"
         >
-          {{ item.top }}
+          {{ item.title }}
         </NuxtLink>
       </template>
       <template v-slot:item.created_at="{ item }">
@@ -41,48 +41,6 @@
         </span>
       </template>
     </v-data-table>
-
-    <!-- <v-simple-table >
-      <template v-slot:default>
-        <thead>
-          <tr>
-            <th>店舗メッセージ</th>
-            <th>募集職種</th>
-            <th>雇用形態</th>
-            <th>募集要項</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in qjins" :key="item.id">
-            <td class="pa-0">
-              <NuxtLink
-                class="qjin-link pl-4 d-flex align-center"
-                :to="`/Qjin/${item.id}`"
-              >
-                {{ item.top }}
-              </NuxtLink>
-            </td>
-            <td>{{ item.payment }}</td>
-            <td>{{ item.hire }}</td>
-            <td>{{ item.content }}</td>
-
-            <td class="text-right">
-              <v-btn
-                color="success"
-                class="mr-1"
-                :to="`/Qjin/edit/${item.id}`"
-              >編集</v-btn>
-              <ConfirmDialog @confirmed="deleteQjin(item.id)">
-                <template v-slot:confirmText>
-                  「{{ item.top }}」を削除してもよろしいですか？
-                </template>
-              </ConfirmDialog>
-            </td>
-          </tr>
-        </tbody>
-      </template>
-    </v-simple-table> -->
   </div>
 </template>
 
