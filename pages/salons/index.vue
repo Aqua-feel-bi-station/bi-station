@@ -63,13 +63,18 @@ export default {
         {
           text: '店舗名',
           value: 'name',
-          width: '40%',
+          width: '30%',
+          sortable: false
+        },
+        {
+          text: '店舗住所',
+          value: 'address',
+          width: '30%',
           sortable: false
         },
         {
           text: '登録日',
-          value: 'created_at',
-          width: '25%'
+          value: 'created_at'
         },
         {
           text: '',

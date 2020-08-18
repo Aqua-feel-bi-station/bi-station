@@ -31,7 +31,7 @@
           <v-btn
             color="success"
             class="mr-1"
-            :to="`/Qjin/edit/${item.id}`"
+            :to="`/salons/${salonId}/Qjin/${item.id}/edit`"
           >編集</v-btn>
           <ConfirmDialog @confirmed="deleteQjin(item.id)">
             <template v-slot:confirmText>
