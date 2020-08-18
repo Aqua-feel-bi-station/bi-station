@@ -3,7 +3,7 @@
     justify="center"
   >
     <v-col cols="12" md="10">
-      <h1 class="mb-5 text-h5">美容室一覧</h1>
+      <h1 class="mb-5 text-h4">美容室一覧</h1>
       <SalonFormDialog />
 
       <v-data-table

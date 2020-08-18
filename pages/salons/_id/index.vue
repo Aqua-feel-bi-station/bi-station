@@ -211,6 +211,18 @@ export default {
               })
             })
             .then(() => {
+              return firebase.firestore().collection('salons').doc(this.salon.id).collection('Qjins').get()
+            })
+            .then((querySnapshot) => {
+              const batch = firebase.firestore().batch()
+
+              querySnapshot.forEach((doc) => {
+                batch.update(doc.ref, 'salon_images', this.salon.images)
+              })
+
+              return batch.commit()
+            })
+            .then(() => {
               this.percentage = 0
               this.formFile = null
               this.$notify('美容室の画像を登録しました')
@@ -229,6 +241,18 @@ export default {
           return firebase.firestore().collection('salons').doc(this.salon.id).update({
             images: this.salon.images
           })
+        })
+        .then(() => {
+          return firebase.firestore().collection('salons').doc(this.salon.id).collection('Qjins').get()
+        })
+        .then((querySnapshot) => {
+          const batch = firebase.firestore().batch()
+
+          querySnapshot.forEach((doc) => {
+            batch.update(doc.ref, 'salon_images', this.salon.images)
+          })
+
+          return batch.commit()
         })
         .then(() => {
           this.$notify('美容室の画像を削除しました')
@@ -258,7 +282,7 @@ export default {
 <style scoped>
 .image-span {
   display: inline-block;
-  height: 200px;
+  height: 250px;
 }
 .image {
   height: 100%;
