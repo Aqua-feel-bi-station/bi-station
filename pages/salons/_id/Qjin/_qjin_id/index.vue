@@ -1,8 +1,26 @@
 <template>
-<div>
+ <v-row justify="center">
+   <v-col cols="12" md="10">
+ <h1 class="text-center primary--text line mb-5">{{qjin.title}}</h1>
+  <v-row>
+    <v-col cols="12" md="4">
+      <span v-for="(url, id) in qjin.salon_images" :key="id">
+      <span class="image-span mt-2 ml-2">
+        <img :src="url" class="image">
+      </span>
+    </span>
+    </v-col>
+    <v-col cols="12" md="8">
+       <p class="message">{{qjin.message}}</p>
+    </v-col>
+  </v-row>
+   <div class="text-center">
+  </div>
+
 <v-simple-table>
   <template v-slot:default>
       <tbody>
+        <h3 class="text-center line primary--text mb-3">求人情報</h3>
         <tr class="d-sm-flex" v-for="item in contents" :key="item.id">
           <th>{{ item.label }}</th>
           <td>{{ item.data }}</td>
@@ -14,7 +32,19 @@
       </div>
     </template>
 </v-simple-table>
-  </div>
+<v-simple-table>
+  <template v-slot:default>
+      <tbody>
+        <h3 class="text-center line primary--text mb-3">企業情報</h3>
+        <tr class="d-sm-flex" v-for="item in salonItems" :key="item.id">
+          <th>{{ item.label }}</th>
+          <td>{{ item.data }}</td>
+        </tr>
+      </tbody> 
+    </template>
+</v-simple-table>
+  </v-col>
+ </v-row>
 </template>
 
 <script>
@@ -24,16 +54,13 @@ import firebase from '@/plugins/firebase'
     data () {
       return {
         qjin: {},
+        salon: {},
       }
     },
 
     computed: {
       contents () {
         return [
-          {
-            label: '店舗メッセージ',
-            data: this.qjin.top
-          },
           {
             label: '店舗名',
             data: this.qjin.name
@@ -60,20 +87,59 @@ import firebase from '@/plugins/firebase'
           },
         ]
       },
+      salonItems(){
+        const unregistered = '(未登録)'
+        return[
+        {
+          label: '店舗住所',
+          data: this.salon.address
+        },
+        {
+          label: '企業名',
+          data: this.salon.company_name
+        },
+        {
+          label: '創立',
+          data: this.salon.establishment_year && this.salon.establishment_month ?
+            `${this.salon.establishment_year}年${this.salon.establishment_month}月` :
+            unregistered
+        },
+        {
+          label: '代表者',
+          data: this.salon.representative_last && this.salon.representative_first ?
+            `${this.salon.representative_last} ${this.salon.representative_first}` :
+            unregistered
+        },
+        {
+          label: '資本金',
+          data: this.salon.capital ? `${this.salon.capital}円` : unregistered
+        },
+        {
+          label: '従業員数',
+          data: this.salon.employee_number ? `${this.salon.employee_number} 名` : unregistered
+        },
+        {
+          label: '業務内容',
+          data: this.salon.job_description || unregistered
+        },
+        {
+          label: 'ホームページURL',
+          data: this.salon.home_page_url || unregistered
+        }
+        ]
+
+      },
     },
     mounted () {
       firebase.firestore().collection('salons').doc(this.$route.params.id)
         .collection('Qjins').doc(this.$route.params.qjin_id).get()
         .then((doc) => {
           this.qjin = doc.data()
-          // if (doc.exists) {
-          // } else {
-          //   throw new Error('ページが見つかりません')
-          // }
-        })
-        // .catch((e) => {
-        //   error({ statusCode: 404, message: 'ページが見つかりません' })
-        // })
+      })
+      firebase.firestore().collection('salons').doc(this.$route.params.id).get()
+        .then((doc) => {
+          this.salon = doc.data()
+      })
     },
   }
 </script>
@@ -90,8 +156,20 @@ table th {
   background-color: #eee;
   width: 10%
 }
-@media screen and (max-width: 0px) {
-    width: 100%;
+@media screen and (max-width: 480px) {
+    table th {
+    width: 100%
+}
   }
+.image {
+  width:100%;
+}
+.message{
+   white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.line {
+  border-bottom: 8px blue solid;
 
+}
 </style>
