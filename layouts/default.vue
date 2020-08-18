@@ -26,6 +26,7 @@
     <v-app-bar
       fixed
       app
+      class="px-5"
     >
       <v-toolbar-title v-text="title" />
       <v-spacer />

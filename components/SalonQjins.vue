@@ -100,19 +100,19 @@ export default {
       qjins: [],
       headers: [
         {
-          text: '店舗メッセージ',
-          value: 'top',
+          text: '求人タイトル',
+          value: 'title',
           width: '45%',
           sortable: false
         },
         {
           text: '募集職種',
-          value: 'hire',
+          value: 'need_class',
           sortable: false
         },
         {
           text: '雇用形態',
-          value: 'payment',
+          value: 'hire_style',
           sortable: false
         },
         {
