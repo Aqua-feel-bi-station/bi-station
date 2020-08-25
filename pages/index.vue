@@ -92,6 +92,9 @@ export default {
   components: {
     Logo,
     VuetifyLogo
+  },
+  asyncData({ redirect }) {
+    return redirect(301, '/Qjin')
   }
 }
 </script>
