@@ -22,13 +22,13 @@
   <template v-slot:default>
     <tbody>
       <tr class="d-sm-flex" v-for="item in contents" :key="item.id">
-        <th>{{ item.label }}</th>
-        <td>{{ item.data }}</td>
+        <th class="d-flex align-center justify-center">{{ item.label }}</th>
+        <td class="d-flex align-center">{{ item.data }}</td>
       </tr>
     </tbody>
   </template>
 </v-simple-table>
-<div style="text-align: center;">
+<div style="text-align: center;" class="mb-10">
   <v-btn depressed large style="background:orange;color:white;">お気に入り</v-btn>
     <v-btn depressed large color="primary">Webで応募</v-btn>
 </div>
@@ -38,8 +38,8 @@
   <template v-slot:default>
     <tbody>
       <tr class="d-sm-flex" v-for="item in salonItems" :key="item.id">
-        <th>{{ item.label }}</th>
-        <td>{{ item.data }}</td>
+        <th class="d-flex align-center justify-center" >{{ item.label }}</th>
+        <td class="d-flex align-center">{{ item.data }}</td>
       </tr>
     </tbody>
   </template>
@@ -78,13 +78,33 @@ import firebase from '@/plugins/firebase'
             label: '仕事内容',
             data: this.qjin.content
           },
-           {
+          {
             label: '対象となる方',
             data: this.qjin.target
           },
           {
+            label: '給与',
+            data: this.qjin.payment
+          },
+          {
             label: '勤務時間',
             data: this.qjin.hour
+          },
+          {
+            label: '福利厚生',
+            data: this.qjin.welfale
+          },
+          {
+            label: '休日',
+            data: this.qjin.holiday
+          },
+          {
+            label: '勤務地',
+            data: this.qjin.place
+          },
+          {
+            label: 'アクセス',
+            data: this.qjin.access
           },
         ]
       },
@@ -149,19 +169,26 @@ import firebase from '@/plugins/firebase'
 table {
   border-collapse: collapse;
 }
-table td, table th {
+table td{
   display: block;
-  padding: 10px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  width: 90%;
+  height: 100%!important;
+  min-height: 48px;
 }
 table th {
+  display: block;
   background-color: #eee;
-  width: 10%
+  width: 10%;
+  height: auto!important;
+  min-height: 48px;
 }
 @media screen and (max-width: 480px) {
     table th {
-    width: 100%
+      width: 100%;
+    }
 }
-  }
 .image {
   width:100%;
 }
@@ -170,7 +197,7 @@ table th {
   word-wrap: break-word;
 }
 .line {
-  border-bottom: 8px blue solid;
+  border-bottom: 8px #1976d2 solid;
 
 }
 </style>
