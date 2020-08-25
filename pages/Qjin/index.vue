@@ -5,15 +5,18 @@
       <v-card
         v-for="qjin in qjins"
         :key="qjin.id"
-        class="mb-8"
+        class="mb-8 pb-3"
       >
         <v-card-title class="primary white--text">
           <v-list-item>
             <v-list-item-content class="py-1">
-              <div
-                class="text-subtitle-2 text-md-h6 white--text font-weight-bold"
-              >
-                {{ qjin.title }}
+              <div>
+                <NuxtLink
+                  class="text-subtitle-2 text-md-h6 white--text font-weight-bold text-decoration-none title-link"
+                  :to="`/salons/${qjin.salon_id}/Qjin/${qjin.id}`"
+                >
+                  {{ qjin.title }}
+                </NuxtLink>
               </div>
               <v-list-item-subtitle class="white--text mt-2">
                 {{ qjin.name }} / {{ qjin.need_class}} {{ qjin.hire_style }}
@@ -23,7 +26,7 @@
         </v-card-title>
         <v-card-text class="pt-5">
           <v-row>
-            <v-col cols="12" md="5" class="text-center">
+            <v-col cols="12" md="5" class="d-flex justify-center align-center">
               <span class="image-span">
                 <img
                   class="image"
@@ -36,12 +39,12 @@
                 v-for="item in qjinItems(qjin)"
                 :key="item.label"
               >
-                <v-col cols="4" class="d-flex justify-end">
+                <v-col cols="4" sm="3" class="d-flex justify-center align-center">
                   <v-chip outlined color="primary" class="text-center">
                     <span style="width: 80px">{{ item.label }}</span>
                   </v-chip>
                 </v-col>
-                <v-col cols="8" class="d-flex align-center">
+                <v-col cols="8" sm="9" class="d-flex align-center black--text">
                   {{ item.data }}
                 </v-col>
               </v-row>
@@ -121,6 +124,10 @@ export default {
   display: inline-block;
 }
 .image {
-  width: 100%;
+  max-height: 270px;
+  max-width: 100%;
+}
+.title-link:hover {
+  opacity: 0.8;
 }
 </style>
