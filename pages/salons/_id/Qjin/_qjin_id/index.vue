@@ -17,31 +17,32 @@
    <div class="text-center">
   </div>
 
+<h3 class="text-center line primary--text mb-3">求人情報</h3>
 <v-simple-table>
   <template v-slot:default>
-      <tbody>
-        <h3 class="text-center line primary--text mb-3">求人情報</h3>
-        <tr class="d-sm-flex" v-for="item in contents" :key="item.id">
-          <th>{{ item.label }}</th>
-          <td>{{ item.data }}</td>
-        </tr>
-      </tbody> 
-      <div style="text-align: center;">
-        <v-btn depressed large style="background:orange;color:white;">お気に入り</v-btn>
-         <v-btn depressed large color="primary">Webで応募</v-btn>
-      </div>
-    </template>
+    <tbody>
+      <tr class="d-sm-flex" v-for="item in contents" :key="item.id">
+        <th>{{ item.label }}</th>
+        <td>{{ item.data }}</td>
+      </tr>
+    </tbody>
+  </template>
 </v-simple-table>
+<div style="text-align: center;">
+  <v-btn depressed large style="background:orange;color:white;">お気に入り</v-btn>
+    <v-btn depressed large color="primary">Webで応募</v-btn>
+</div>
+
+<h3 class="text-center line primary--text mb-3">企業情報</h3>
 <v-simple-table>
   <template v-slot:default>
-      <tbody>
-        <h3 class="text-center line primary--text mb-3">企業情報</h3>
-        <tr class="d-sm-flex" v-for="item in salonItems" :key="item.id">
-          <th>{{ item.label }}</th>
-          <td>{{ item.data }}</td>
-        </tr>
-      </tbody> 
-    </template>
+    <tbody>
+      <tr class="d-sm-flex" v-for="item in salonItems" :key="item.id">
+        <th>{{ item.label }}</th>
+        <td>{{ item.data }}</td>
+      </tr>
+    </tbody>
+  </template>
 </v-simple-table>
   </v-col>
  </v-row>
