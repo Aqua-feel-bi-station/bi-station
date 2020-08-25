@@ -28,7 +28,7 @@
               required
             ></v-textarea>
 
-            <v-file-input
+            <!-- <v-file-input
             v-model="formFile"
             accept="image/*"
             placeholder="画像を追加する（最大3枚）"
@@ -39,7 +39,7 @@
           <v-progress-linear
             v-if="percentage !== 0"
             :value="percentage"
-          />
+          /> -->
 
             <v-text-field
               v-model.trim="fieldData.name"
@@ -123,7 +123,6 @@
                 color="success"
                 class="mr-4"
                 @click="onSubmit"
-                :loading="isLoading"
               >
                 作成
               </v-btn>
