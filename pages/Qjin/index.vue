@@ -39,14 +39,16 @@
                 v-for="item in qjinItems(qjin)"
                 :key="item.label"
               >
-                <v-col cols="4" sm="3" class="d-flex justify-center align-center">
+                <v-col cols="4" sm="3" class="d-flex justify-center align-start">
                   <v-chip outlined color="primary" class="text-center">
                     <span style="width: 80px">{{ item.label }}</span>
                   </v-chip>
                 </v-col>
-                <v-col cols="8" sm="9" class="d-flex align-center black--text">
-                  {{ item.data }}
-                </v-col>
+                <v-col
+                  cols="8"
+                  sm="9"
+                  class="qjin-item d-flex align-center black--text"
+                >{{ item.data }}</v-col>
               </v-row>
             </v-col>
           </v-row>
@@ -129,5 +131,9 @@ export default {
 }
 .title-link:hover {
   opacity: 0.8;
+}
+.qjin-item {
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 </style>

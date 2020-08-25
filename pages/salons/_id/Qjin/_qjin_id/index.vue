@@ -23,12 +23,12 @@
     <tbody>
       <tr class="d-sm-flex" v-for="item in contents" :key="item.id">
         <th class="d-flex align-center justify-center">{{ item.label }}</th>
-        <td class="d-flex align-center">{{ item.data }}</td>
+        <td class="d-flex align-center py-2">{{ item.data }}</td>
       </tr>
     </tbody>
   </template>
 </v-simple-table>
-<div style="text-align: center;" class="mb-10">
+<div style="text-align: center;" class="mb-10 mt-4">
   <v-btn depressed large style="background:orange;color:white;">お気に入り</v-btn>
     <v-btn depressed large color="primary">Webで応募</v-btn>
 </div>
@@ -39,7 +39,7 @@
     <tbody>
       <tr class="d-sm-flex" v-for="item in salonItems" :key="item.id">
         <th class="d-flex align-center justify-center" >{{ item.label }}</th>
-        <td class="d-flex align-center">{{ item.data }}</td>
+        <td class="d-flex align-center py-2">{{ item.data }}</td>
       </tr>
     </tbody>
   </template>
@@ -144,7 +144,7 @@ import firebase from '@/plugins/firebase'
           data: this.salon.job_description || unregistered
         },
         {
-          label: 'ホームページURL',
+          label: 'ホームページ',
           data: this.salon.home_page_url || unregistered
         }
         ]
@@ -173,19 +173,19 @@ table td{
   display: block;
   white-space: pre-wrap;
   word-wrap: break-word;
-  width: 90%;
+  width: 85%;
   height: 100%!important;
   min-height: 48px;
 }
 table th {
   display: block;
   background-color: #eee;
-  width: 10%;
+  width: 15%;
   height: auto!important;
   min-height: 48px;
 }
-@media screen and (max-width: 480px) {
-    table th {
+@media screen and (max-width: 600px) {
+    table th, td {
       width: 100%;
     }
 }
@@ -193,7 +193,7 @@ table th {
   width:100%;
 }
 .message{
-   white-space: pre-wrap;
+  white-space: pre-wrap;
   word-wrap: break-word;
 }
 .line {

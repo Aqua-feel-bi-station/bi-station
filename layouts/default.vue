@@ -28,7 +28,12 @@
       app
       class="px-5"
     >
-      <v-toolbar-title v-text="title" />
+      <v-toolbar-title>
+        <NuxtLink
+          to="/Qjin"
+          class="text-decoration-none grey--text text--darken-3"
+        >{{ title }}</NuxtLink>
+      </v-toolbar-title>
       <v-spacer />
       <v-btn
         icon
